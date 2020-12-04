@@ -1,0 +1,5 @@
+.idea/
+venv/
+cred.ini
+__pycache__/
+dropbox_log_file.txt
