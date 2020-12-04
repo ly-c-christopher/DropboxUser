@@ -9,9 +9,9 @@ SERVER_ITEM_NAMES = set()
 
 def main():
     f = open("dropbox_log_file.txt", "a")
-    f.write('%s run time. \n' % datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"))
+    f.write('[%s] Run time \n' % datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"))
     params = config('dropbox')
-    f.write('%s scanning local files. \n' % datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"))
+    f.write('[%s] scanning local files. \n' % datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"))
     get_local_files(params['server_path'])
     dba = DropboxAccess(access_token=params['user_key'], current_root='All_NuOrder_Images')
     dba.get_dropbox_folders_in_all(f)
@@ -20,10 +20,10 @@ def main():
         dba.get_dropbox_files_in_folders(folder_name, f)
     print('dba.all_dropbox_items: %s' % len(dba.all_dropbox_items))
     print('SERVER_ITEM_NAMES %s ' % len(SERVER_ITEM_NAMES))
-    f.write('%s total items in dropbox: %s \n' % (datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"),
-                                                  len(dba.get_dropbox_items())))
-    f.write('%s total items in local disk: %s \n' % (datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"),
-                                                     len(SERVER_ITEM_NAMES)))
+    f.write('[%s] total items in dropbox: %s \n' % (datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"),
+                                                    len(dba.get_dropbox_items())))
+    f.write('[%s] total items in local disk: %s \n' % (datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"),
+                                                       len(SERVER_ITEM_NAMES)))
     difference_set = SERVER_ITEM_NAMES.difference(dba.get_dropbox_items())
 
     if len(difference_set) > 0:
@@ -38,6 +38,8 @@ def main():
                     new_upload_set.add(pathItem)
                     break
         dba.upload_items(new_upload_set, today_string, f)
+    else:
+        f.write('[%s] No items found to upload.')
     f.write('============================================================================================\n')
     f.close()
 

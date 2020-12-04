@@ -17,19 +17,20 @@ class DropboxAccess:
 
     def create_folder(self, folder_name, f):
         try:
-            f.write('%s trying to create folder. \n' % datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"))
+            f.write('[%s] trying to create folder. \n' % datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"))
             dbx = dropbox.Dropbox(self.access_token)
             new_folder_path = '/%s/%s' % (self.current_root, folder_name)
             print('new_folder_path: ', new_folder_path)
             dbx.files_create_folder_v2(new_folder_path)
             print("new folder created: ", new_folder_path)
-            f.write('%s folder created sucessfully.\n' % datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"))
+            f.write('[%s] folder created sucessfully.\n' % datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"))
         except dropbox.exceptions.ApiError:
-            f.write('%s folder could not be created.\n ' % datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"))
+            f.write('[%s] folder could not be created.\n ' % datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"))
             print('could not create folder named: %s' % folder_name)
 
     def get_dropbox_files_in_folders(self, folder_name, f):
-        f.write('%s checking all files within folders. \n' % datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"))
+        f.write('[%s] checking all files within folder: %s. \n' %
+                (datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S")), folder_name)
         dbx = dropbox.Dropbox(self.access_token)
         response = dbx.files_list_folder('/%s/%s/' % (self.current_root, folder_name))
         cursor = response.cursor
@@ -50,7 +51,7 @@ class DropboxAccess:
         print('%s has %s in the folder' % (folder_name, count))
 
     def get_dropbox_folders_in_all(self, f):
-        f.write('%s checking all folders within root.\n' % datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"))
+        f.write('[%s] checking all folders within root.\n' % datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"))
         dbx = dropbox.Dropbox(self.access_token)
         response = dbx.files_list_folder('/%s/' % self.current_root)
         cursor = response.cursor
@@ -75,11 +76,13 @@ class DropboxAccess:
             return True
         except:
             print("UPLOAD BROKE FOR : " + file_from)
-            f_write.write('%s Failed to upload %s. \n' % (datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"), file_from))
+            f_write.write('[%s] Failed to upload %s. \n' % (datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"),
+                                                            file_from))
             return False
 
     def upload_items(self, set_list, folder_name, f):
-        f.write('%s uploading %s items to dropbox. \n' % (datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"), len(set_list)))
+        f.write('[%s] uploading %s items to dropbox. \n' % (datetime.datetime.now().strftime("%m/%d/%y-%H:%M:%S"),
+                                                            len(set_list)))
         for item in set_list:
             file_from = item[1]
             file_name = '/%s/%s/%s' % (self.current_root, folder_name, item[0])
